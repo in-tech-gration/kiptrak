@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import progressRouter from "./routes/progress";
 
 dotenv.config({ path: "./config.env" });
 
@@ -20,6 +21,8 @@ app.listen(PORT, () => {
 app.get("/api/hello", (req: Request, res: Response) => {
   res.send({ message: "Hello" });
 });
+
+app.use("/api/progress", progressRouter);
 
 // All other unmatched requests will return the React app
 app.get("/", (req: Request, res: Response) => {
