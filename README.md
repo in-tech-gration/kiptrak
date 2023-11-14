@@ -10,9 +10,11 @@ A tool for tracking progress of WDX-180's students
 ```env
 NODE_ENV=development
 PORT=5000
+DATA_FOLDER=data
 ```
 
-3. Run the following commands to launch the app on `http://localhost:5173/`:
+3. Create a `data/` folder in the root directory and store inside content from `user/` folder from WDX-180's repo.
+4. Run the following commands to launch the app on `http://localhost:5173/`:
    - `npm install`
    - `cd client && npm install`
    - `cd .. && npm run dev`
