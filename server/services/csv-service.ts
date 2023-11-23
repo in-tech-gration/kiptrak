@@ -86,3 +86,17 @@ export const writeToCSV = async (
     csv
   );
 };
+
+export const deleteCSV = async (week: string, day: string) => {
+  await fs.rm(
+    path.resolve(
+      __dirname,
+      "..",
+      "..",
+      DATA_FOLDER,
+      `week${week}`,
+      "progress",
+      `progress.w${week}.d${day}.csv`
+    )
+  );
+};
