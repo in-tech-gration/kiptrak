@@ -60,7 +60,11 @@ export const getCSVData = async (type: string, week?: string, day?: string) => {
   }
 };
 
-export const writeToCSV = (data: ProgressType[], week: string, day: string) => {
+export const writeToCSV = async (
+  data: ProgressType[],
+  week: string,
+  day: string
+) => {
   let csv = Object.keys(data[0]).join(",") + "\n";
   for (const row of data) {
     csv += Object.values(row).join(",") + "\n";
@@ -69,7 +73,7 @@ export const writeToCSV = (data: ProgressType[], week: string, day: string) => {
   // Parse csv to check for validity
   parse(csv);
 
-  fs.writeFile(
+  await fs.writeFile(
     path.resolve(
       __dirname,
       "..",

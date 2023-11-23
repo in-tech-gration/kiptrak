@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getProgress } from "../controllers/progress";
+import { getProgress, postProgress } from "../controllers/progress";
 
 const router = Router();
 
-router.post("/"); // postProgress  
+router.post("/", postProgress); // postProgress  
 router.get("/", getProgress); // getProgress using params
 router.patch("/"); // updateProgress using params
 router.delete("/"); // deleteProgress using params
