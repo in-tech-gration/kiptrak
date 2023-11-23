@@ -1,52 +1,86 @@
 import { RequestHandler } from "express";
-import path from "path";
-import { parse, stringify } from "csv/sync";
-import { promises as fs } from "fs";
+import { getCSV, writeCSV, deleteCSV } from "../services/csv-service";
 
-const DATA_FOLDER = process.env.DATA_FOLDER || "data";
-
-// GET /api/progress/draft
-export const getProgressDraft: RequestHandler = async (req, res, next) => {
-  const week = req.query.week;
-  const day = req.query.day;
+// GET /api/progress?type=<type>&week=<week>&day=<day>
+export const getProgress: RequestHandler = async (req, res, next) => {
+  const week = req.query.week?.toString();
+  const day = req.query.day?.toString();
+  const type = req.query.type?.toString();
 
   try {
-    let content;
-    // [?week=XX&day=YY]: If both params present on the URL return the requested progress
-    if (week && day) {
-      content = await fs.readFile(
-        path.resolve(
-          __dirname,
-          "..",
-          "..",
-          DATA_FOLDER,
-          `week${week}`,
-          "progress",
-          `progress.draft.w${week}.d${day}.csv`
-        )
-      );
-    }
-    // TODO: [?week=XX]: If only param week is present return progress for all days
-    // If no params present on the URL return the first day of the first week
-    else {
-      // console.log(process.env.DATA_FOLDER + __dirname
-      content = await fs.readFile(
-        path.resolve(
-          __dirname,
-          "..",
-          "..",
-          DATA_FOLDER,
-          "week01",
-          "progress",
-          "progress.draft.w01.d01.csv"
-        )
-      );
-    }
-
-    const records = content && parse(content);
+    const records = await getCSV(type ? type : "", week, day);
     res.status(200).json({ records });
   } catch (error) {
     console.log(error);
     next(error);
   }
+};
+
+// POST /api/progress
+export const postProgress: RequestHandler = async (req, res, next) => {
+  const data = req.body.data;
+  const week = req.body.week;
+  const day = req.body.day;
+
+  if (!week || !day) {
+    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    return;
+  }
+
+  try {
+    await writeCSV(data, week, day);
+    res.status(201).send({
+      fileName: `progress.w${week}.d${day}.csv`,
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+// DELETE /api/progress?week=<week>&day=<day>
+export const deleteProgress: RequestHandler = async (req, res, next) => {
+  const week = req.query.week?.toString();
+  const day = req.query.day?.toString();
+
+  if (!week || !day) {
+    next("Missing URL parameters. Please provide both 'week' and 'day'");
+    return;
+  }
+
+  try {
+    await deleteCSV(week, day);
+    res.status(200).send({
+      fileName: `progress.w${week}.d${day}.csv`,
+      message: "Success",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+// PUT /api/progress
+export const updateProgress: RequestHandler = async (req, res, next) => {
+  const data = req.body.data;
+  const week = req.body.week;
+  const day = req.body.day;
+
+  if (!week || !day) {
+    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    return;
+  }
+
+  try {
+    await writeCSV(data, week, day);
+    res.status(200).send({
+      fileName: `progress.w${week}.d${day}.csv`,
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+
 };
