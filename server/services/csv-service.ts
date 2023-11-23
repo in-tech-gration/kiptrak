@@ -1,7 +1,7 @@
 import path from "path";
 import { parse, stringify } from "csv/sync";
 import { promises as fs } from "fs";
-import { ProgressType } from "../models/progress";
+import { IProgressRow } from "../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
@@ -69,7 +69,7 @@ export const getCSV = async (type: string, week: string, day?: string) => {
 };
 
 export const writeCSV = async (
-  data: ProgressType[],
+  data: IProgressRow[],
   week: string,
   day: string
 ) => {
