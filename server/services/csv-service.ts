@@ -1,6 +1,7 @@
 import path from "path";
 import { parse, stringify } from "csv/sync";
 import { promises as fs } from "fs";
+import { ProgressType } from "../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
@@ -57,4 +58,27 @@ export const getCSVData = async (type: string, week?: string, day?: string) => {
   } else {
     throw new Error("Week parameter is required!");
   }
+};
+
+export const writeToCSV = (data: ProgressType[], week: string, day: string) => {
+  let csv = Object.keys(data[0]).join(",") + "\n";
+  for (const row of data) {
+    csv += Object.values(row).join(",") + "\n";
+  }
+
+  // Parse csv to check for validity
+  parse(csv);
+
+  fs.writeFile(
+    path.resolve(
+      __dirname,
+      "..",
+      "..",
+      DATA_FOLDER,
+      `week${week}`,
+      "progress",
+      `progress.w${week}.d${day}.csv`
+    ),
+    csv
+  );
 };
