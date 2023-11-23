@@ -13,7 +13,7 @@ const DATA_FOLDER = process.env.DATA_FOLDER || "data";
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
 export const getCSV = async (type: string, week: string, day?: string) => {
-  const records: any = [];
+  const records: IProgressRow[][] = [];
 
   if (week && day) {
     const days = day.split(",");
@@ -65,7 +65,8 @@ export const getCSV = async (type: string, week: string, day?: string) => {
     throw new Error("Week parameter is required!");
   }
 
-  return [].concat(...records);
+  // Make from [][] to [] array
+  return records.reduce((acc, value) => acc.concat(value), [] as IProgressRow[]);
 };
 
 export const writeCSV = async (
