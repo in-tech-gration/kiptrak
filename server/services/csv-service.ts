@@ -1,71 +1,53 @@
 import path from "path";
-import { parse, stringify } from "csv/sync";
+import { parse } from "csv/sync";
 import { promises as fs } from "fs";
 import { IProgressRow } from "../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
+const resolvedFolder = (type: string, week: string, day?: string) =>
+  path.resolve(
+    __dirname,
+    "..",
+    "..",
+    DATA_FOLDER,
+    `week${week}`,
+    "progress",
+    `progress.${type}w${week}.d${day}.csv`
+  );
+
 /**
- * @param type: string | either 'draft.' or ''
- * @param week: string
- * @param day?: string
+ * @param type: string | e.g. 'draft.' or ''
+ * @param week: string | e.g. '01'
+ * @param day?: string | e.g. '01' or '01,02,03'
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
-export const getCSV = async (type: string, week?: string, day?: string) => {
+export const getCSV = async (type: string, week: string, day?: string) => {
+  const records: IProgressRow[][] = [];
+
+  const days: string[] = [];
   if (week && day) {
-    let records: any = [];
-    const days = day.split(",");
-
-    for (const d of days) {
-      records.push(
-        parse(
-          await fs.readFile(
-            path.resolve(
-              __dirname,
-              "..",
-              "..",
-              DATA_FOLDER,
-              `week${week}`,
-              "progress",
-              `progress.${type}w${week}.d${d}.csv`
-            )
-          ),
-          {
-            columns: true,
-          }
-        )
-      );
-    }
-    return [].concat(...records);
+    day.split(",").forEach((value) => days.push(value));
   } else if (week) {
-    let records: any = [];
-    const days = ["01", "02", "03", "04", "05"];
-
-    for (const d of days) {
-      records.push(
-        parse(
-          await fs.readFile(
-            path.resolve(
-              __dirname,
-              "..",
-              "..",
-              DATA_FOLDER,
-              `week${week}`,
-              "progress",
-              `progress.${type}w${week}.d${d}.csv`
-            )
-          ),
-          {
-            columns: true,
-          }
-        )
-      );
-    }
-    return [].concat(...records);
+    ["01", "02", "03", "04", "05"].forEach((value) => days.push(value));
   } else {
     throw new Error("Week parameter is required!");
   }
+
+  for (const day of days) {
+    records.push(
+      parse(await fs.readFile(resolvedFolder(type, week, day)), {
+        columns: true,
+      })
+    );
+  }
+
+  // Make from [][] to [] array
+  return records.reduce(
+    (acc, value) => acc.concat(value),
+    [] as IProgressRow[]
+  );
 };
 
 export const writeCSV = async (
@@ -81,30 +63,9 @@ export const writeCSV = async (
   // Parse csv to check for validity
   parse(csv);
 
-  await fs.writeFile(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      DATA_FOLDER,
-      `week${week}`,
-      "progress",
-      `progress.w${week}.d${day}.csv`
-    ),
-    csv
-  );
+  await fs.writeFile(resolvedFolder("", week, day), csv);
 };
 
 export const deleteCSV = async (week: string, day: string) => {
-  await fs.rm(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      DATA_FOLDER,
-      `week${week}`,
-      "progress",
-      `progress.w${week}.d${day}.csv`
-    )
-  );
+  await fs.rm(resolvedFolder("", week, day));
 };
