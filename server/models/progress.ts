@@ -1,10 +1,16 @@
-export interface ProgressType {
-  Week: string;
-  Day: string;
+enum Level {
+  beg = "Beginner",
+  int = "Intermediate",
+  adv = "Advanced",
+}
+
+export interface IProgressRow {
+  Week: number;
+  Day: number;
   Concept: string;
   Task: string;
-  Level: string;
-  Confidence: string;
-  Completed: string;
+  Level: Level;
+  Confidence: number;
+  Completed: boolean;
   Instructions: string;
 }
