@@ -13,23 +13,31 @@ const DATA_FOLDER = process.env.DATA_FOLDER || "data";
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
 export const getCSV = async (type: string, week?: string, day?: string) => {
-  if (day) {
-    return parse(
-      await fs.readFile(
-        path.resolve(
-          __dirname,
-          "..",
-          "..",
-          DATA_FOLDER,
-          `week${week}`,
-          "progress",
-          `progress.${type}w${week}.d${day}.csv`
+  if (week && day) {
+    let records: any = [];
+    const days = day.split(",");
+
+    for (const d of days) {
+      records.push(
+        parse(
+          await fs.readFile(
+            path.resolve(
+              __dirname,
+              "..",
+              "..",
+              DATA_FOLDER,
+              `week${week}`,
+              "progress",
+              `progress.${type}w${week}.d${d}.csv`
+            )
+          ),
+          {
+            columns: true,
+          }
         )
-      ),
-      {
-        columns: true,
-      }
-    );
+      );
+    }
+    return [].concat(...records);
   } else if (week) {
     let records: any = [];
     const days = ["01", "02", "03", "04", "05"];
