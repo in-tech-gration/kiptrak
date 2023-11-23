@@ -1,10 +1,16 @@
+enum Level {
+  beg = "Beginner",
+  int = "Intermediate",
+  adv = "Advanced",
+}
+
 export interface IProgressRow {
-  Week: string;
-  Day: string;
+  Week: number;
+  Day: number;
   Concept: string;
   Task: string;
-  Level: string;
-  Confidence: string;
-  Completed: string;
+  Level: Level;
+  Confidence: number;
+  Completed: boolean;
   Instructions: string;
 }
