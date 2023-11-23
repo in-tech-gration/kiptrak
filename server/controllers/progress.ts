@@ -3,13 +3,26 @@ import { getCSV, writeCSV, deleteCSV } from "../services/csv-service";
 
 // GET /api/progress?type=<type>&week=<week>&day=<day>
 export const getProgress: RequestHandler = async (req, res, next) => {
-  const week = req.query.week?.toString();
-  const day = req.query.day?.toString();
-  const type = req.query.type?.toString();
+  const week = req.query.week;
+  const day = req.query.day;
+  const type = req.query.type;
 
   try {
-    const records = await getCSV(type ? type : "", week, day);
-    res.status(200).json({ records });
+    if (week) {
+      const data = day
+        ? await getCSV(
+            type ? type.toString() : "",
+            week.toString(),
+            day.toString()
+          )
+        : await getCSV(type ? type.toString() : "", week.toString());
+      res.status(200).send({
+        week,
+        days: day ? day.toString().split(",") : ["01", "02", "03", "04", "05"],
+        rows: data.length,
+        data,
+      });
+    }
   } catch (error) {
     console.log(error);
     next(error);
@@ -82,5 +95,4 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
     console.log(error);
     next(error);
   }
-
 };
