@@ -1,4 +1,4 @@
-export interface ProgressType {
+export interface IProgressRow {
   Week: string;
   Day: string;
   Concept: string;
