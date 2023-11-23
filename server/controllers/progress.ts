@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { getCSVData, writeToCSV, deleteCSV } from "../services/csv-service";
+import { getCSV, writeCSV, deleteCSV } from "../services/csv-service";
 
 // GET /api/progress?type=<type>&week=<week>&day=<day>
 export const getProgress: RequestHandler = async (req, res, next) => {
@@ -8,7 +8,7 @@ export const getProgress: RequestHandler = async (req, res, next) => {
   const type = req.query.type?.toString();
 
   try {
-    const records = await getCSVData(type ? type : "", week, day);
+    const records = await getCSV(type ? type : "", week, day);
     res.status(200).json({ records });
   } catch (error) {
     console.log(error);
@@ -23,7 +23,7 @@ export const postProgress: RequestHandler = async (req, res, next) => {
   const day = req.body.day;
 
   try {
-    await writeToCSV(data, week, day);
+    await writeCSV(data, week, day);
     res.status(200).send({
       fileName: `progress.w${week}.d${day}.csv`,
       data,

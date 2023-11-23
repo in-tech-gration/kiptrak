@@ -12,7 +12,7 @@ const DATA_FOLDER = process.env.DATA_FOLDER || "data";
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
-export const getCSVData = async (type: string, week?: string, day?: string) => {
+export const getCSV = async (type: string, week?: string, day?: string) => {
   if (day) {
     return parse(
       await fs.readFile(
@@ -60,7 +60,7 @@ export const getCSVData = async (type: string, week?: string, day?: string) => {
   }
 };
 
-export const writeToCSV = async (
+export const writeCSV = async (
   data: ProgressType[],
   week: string,
   day: string
