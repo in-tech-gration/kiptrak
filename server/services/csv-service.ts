@@ -18,7 +18,7 @@ export const getCSV = async (type: string, week: string, day?: string) => {
   if (week && day) {
     const days = day.split(",");
 
-    for (const d of days) {
+    for (const day of days) {
       records.push(
         parse(
           await fs.readFile(
@@ -29,7 +29,7 @@ export const getCSV = async (type: string, week: string, day?: string) => {
               DATA_FOLDER,
               `week${week}`,
               "progress",
-              `progress.${type}w${week}.d${d}.csv`
+              `progress.${type}w${week}.d${day}.csv`
             )
           ),
           {
@@ -41,7 +41,7 @@ export const getCSV = async (type: string, week: string, day?: string) => {
   } else if (week) {
     const days = ["01", "02", "03", "04", "05"];
 
-    for (const d of days) {
+    for (const day of days) {
       records.push(
         parse(
           await fs.readFile(
@@ -52,7 +52,7 @@ export const getCSV = async (type: string, week: string, day?: string) => {
               DATA_FOLDER,
               `week${week}`,
               "progress",
-              `progress.${type}w${week}.d${d}.csv`
+              `progress.${type}w${week}.d${day}.csv`
             )
           ),
           {
