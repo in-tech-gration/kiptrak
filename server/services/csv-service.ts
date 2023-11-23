@@ -5,6 +5,17 @@ import { IProgressRow } from "../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
+const resolvedFolder = (type: string, week: string, day?: string) =>
+  path.resolve(
+    __dirname,
+    "..",
+    "..",
+    DATA_FOLDER,
+    `week${week}`,
+    "progress",
+    `progress.${type}w${week}.d${day}.csv`
+  );
+
 /**
  * @param type: string | either 'draft.' or ''
  * @param week: string
@@ -20,22 +31,9 @@ export const getCSV = async (type: string, week: string, day?: string) => {
 
     for (const day of days) {
       records.push(
-        parse(
-          await fs.readFile(
-            path.resolve(
-              __dirname,
-              "..",
-              "..",
-              DATA_FOLDER,
-              `week${week}`,
-              "progress",
-              `progress.${type}w${week}.d${day}.csv`
-            )
-          ),
-          {
-            columns: true,
-          }
-        )
+        parse(await fs.readFile(resolvedFolder(type, week, day)), {
+          columns: true,
+        })
       );
     }
   } else if (week) {
@@ -43,22 +41,9 @@ export const getCSV = async (type: string, week: string, day?: string) => {
 
     for (const day of days) {
       records.push(
-        parse(
-          await fs.readFile(
-            path.resolve(
-              __dirname,
-              "..",
-              "..",
-              DATA_FOLDER,
-              `week${week}`,
-              "progress",
-              `progress.${type}w${week}.d${day}.csv`
-            )
-          ),
-          {
-            columns: true,
-          }
-        )
+        parse(await fs.readFile(resolvedFolder(type, week, day)), {
+          columns: true,
+        })
       );
     }
   } else {
@@ -66,7 +51,10 @@ export const getCSV = async (type: string, week: string, day?: string) => {
   }
 
   // Make from [][] to [] array
-  return records.reduce((acc, value) => acc.concat(value), [] as IProgressRow[]);
+  return records.reduce(
+    (acc, value) => acc.concat(value),
+    [] as IProgressRow[]
+  );
 };
 
 export const writeCSV = async (
@@ -82,30 +70,9 @@ export const writeCSV = async (
   // Parse csv to check for validity
   parse(csv);
 
-  await fs.writeFile(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      DATA_FOLDER,
-      `week${week}`,
-      "progress",
-      `progress.w${week}.d${day}.csv`
-    ),
-    csv
-  );
+  await fs.writeFile(resolvedFolder("", week, day), csv);
 };
 
 export const deleteCSV = async (week: string, day: string) => {
-  await fs.rm(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      DATA_FOLDER,
-      `week${week}`,
-      "progress",
-      `progress.w${week}.d${day}.csv`
-    )
-  );
+  await fs.rm(resolvedFolder("", week, day));
 };
