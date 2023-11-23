@@ -12,9 +12,10 @@ const DATA_FOLDER = process.env.DATA_FOLDER || "data";
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
-export const getCSV = async (type: string, week?: string, day?: string) => {
+export const getCSV = async (type: string, week: string, day?: string) => {
+  const records: any = [];
+
   if (week && day) {
-    const records: any = [];
     const days = day.split(",");
 
     for (const d of days) {
@@ -37,9 +38,7 @@ export const getCSV = async (type: string, week?: string, day?: string) => {
         )
       );
     }
-    return [].concat(...records);
   } else if (week) {
-    const records: any = [];
     const days = ["01", "02", "03", "04", "05"];
 
     for (const d of days) {
@@ -62,10 +61,11 @@ export const getCSV = async (type: string, week?: string, day?: string) => {
         )
       );
     }
-    return [].concat(...records);
   } else {
     throw new Error("Week parameter is required!");
   }
+
+  return [].concat(...records);
 };
 
 export const writeCSV = async (
