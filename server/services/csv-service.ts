@@ -5,16 +5,13 @@ import { promises as fs } from "fs";
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
 /**
+ * @param type: string | either 'draft.' or ''
  * @param week: string
  * @param day?: string
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
-export const getCSVData = async (
-  type: string,
-  week?: string,
-  day?: string
-) => {
+export const getCSVData = async (type: string, week?: string, day?: string) => {
   if (day) {
     return parse(
       await fs.readFile(
