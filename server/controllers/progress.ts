@@ -29,7 +29,7 @@ export const postProgress: RequestHandler = async (req, res, next) => {
 
   try {
     await writeCSV(data, week, day);
-    res.status(200).send({
+    res.status(201).send({
       fileName: `progress.w${week}.d${day}.csv`,
       data,
     });
@@ -59,4 +59,28 @@ export const deleteProgress: RequestHandler = async (req, res, next) => {
     console.log(error);
     next(error);
   }
+};
+
+// PUT /api/progress
+export const updateProgress: RequestHandler = async (req, res, next) => {
+  const data = req.body.data;
+  const week = req.body.week;
+  const day = req.body.day;
+
+  if (!week || !day) {
+    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    return;
+  }
+
+  try {
+    await writeCSV(data, week, day);
+    res.status(200).send({
+      fileName: `progress.w${week}.d${day}.csv`,
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+
 };
