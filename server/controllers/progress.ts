@@ -22,6 +22,11 @@ export const postProgress: RequestHandler = async (req, res, next) => {
   const week = req.body.week;
   const day = req.body.day;
 
+  if (!week || !day) {
+    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    return;
+  }
+
   try {
     await writeCSV(data, week, day);
     res.status(200).send({
