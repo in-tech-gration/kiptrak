@@ -1,3 +1,4 @@
+import { CustomError } from "../error";
 import { RequestHandler } from "express";
 import { getCSV, writeCSV, deleteCSV } from "../services/csv-service";
 
@@ -7,22 +8,31 @@ export const getProgress: RequestHandler = async (req, res, next) => {
   const day = req.query.day;
   const type = req.query.type;
 
+  if (!week) {
+    next(
+      new CustomError(
+        "MISSING_URL_PARAMETERS",
+        400,
+        "Missing URL parameters. Please provide 'week'"
+      )
+    );
+    return;
+  }
+
   try {
-    if (week) {
-      const data = day
-        ? await getCSV(
-            type ? type.toString() : "",
-            week.toString(),
-            day.toString()
-          )
-        : await getCSV(type ? type.toString() : "", week.toString());
-      res.status(200).send({
-        week,
-        days: day ? day.toString().split(",") : ["01", "02", "03", "04", "05"],
-        rows: data.length,
-        data,
-      });
-    }
+    const data = day
+      ? await getCSV(
+          type ? type.toString() : "",
+          week.toString(),
+          day.toString()
+        )
+      : await getCSV(type ? type.toString() : "", week.toString());
+    res.status(200).send({
+      week,
+      days: day ? day.toString().split(",") : ["01", "02", "03", "04", "05"],
+      rows: data.length,
+      data,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -36,7 +46,13 @@ export const postProgress: RequestHandler = async (req, res, next) => {
   const day = req.body.day;
 
   if (!week || !day) {
-    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    next(
+      new CustomError(
+        "MISSING_BODY_PARAMETERS",
+        400,
+        "Missing Body parameters. Please provide both 'week' and 'day'."
+      )
+    );
     return;
   }
 
@@ -58,7 +74,13 @@ export const deleteProgress: RequestHandler = async (req, res, next) => {
   const day = req.query.day?.toString();
 
   if (!week || !day) {
-    next("Missing URL parameters. Please provide both 'week' and 'day'");
+    next(
+      new CustomError(
+        "MISSING_URL_PARAMETERS",
+        400,
+        "Missing URL parameters. Please provide both 'week' and 'day'"
+      )
+    );
     return;
   }
 
@@ -81,7 +103,13 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
   const day = req.body.day;
 
   if (!week || !day) {
-    next("Missing Body parameters. Please provide both 'week' and 'day'");
+    next(
+      new CustomError(
+        "MISSING_BODY_PARAMETERS",
+        400,
+        "Missing Body parameters. Please provide both 'week' and 'day'."
+      )
+    );
     return;
   }
 
