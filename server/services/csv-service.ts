@@ -14,7 +14,7 @@ const DATA_FOLDER = process.env.DATA_FOLDER || "data";
  */
 export const getCSV = async (type: string, week?: string, day?: string) => {
   if (week && day) {
-    let records: any = [];
+    const records: any = [];
     const days = day.split(",");
 
     for (const d of days) {
@@ -39,7 +39,7 @@ export const getCSV = async (type: string, week?: string, day?: string) => {
     }
     return [].concat(...records);
   } else if (week) {
-    let records: any = [];
+    const records: any = [];
     const days = ["01", "02", "03", "04", "05"];
 
     for (const d of days) {
