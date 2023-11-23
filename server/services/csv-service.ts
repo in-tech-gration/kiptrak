@@ -1,5 +1,5 @@
 import path from "path";
-import { parse, stringify } from "csv/sync";
+import { parse } from "csv/sync";
 import { promises as fs } from "fs";
 import { IProgressRow } from "../models/progress";
 
@@ -17,37 +17,30 @@ const resolvedFolder = (type: string, week: string, day?: string) =>
   );
 
 /**
- * @param type: string | either 'draft.' or ''
- * @param week: string
- * @param day?: string
+ * @param type: string | e.g. 'draft.' or ''
+ * @param week: string | e.g. '01'
+ * @param day?: string | e.g. '01' or '01,02,03'
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
 export const getCSV = async (type: string, week: string, day?: string) => {
   const records: IProgressRow[][] = [];
 
+  const days: string[] = [];
   if (week && day) {
-    const days = day.split(",");
-
-    for (const day of days) {
-      records.push(
-        parse(await fs.readFile(resolvedFolder(type, week, day)), {
-          columns: true,
-        })
-      );
-    }
+    day.split(",").forEach((value) => days.push(value));
   } else if (week) {
-    const days = ["01", "02", "03", "04", "05"];
-
-    for (const day of days) {
-      records.push(
-        parse(await fs.readFile(resolvedFolder(type, week, day)), {
-          columns: true,
-        })
-      );
-    }
+    ["01", "02", "03", "04", "05"].forEach((value) => days.push(value));
   } else {
     throw new Error("Week parameter is required!");
+  }
+
+  for (const day of days) {
+    records.push(
+      parse(await fs.readFile(resolvedFolder(type, week, day)), {
+        columns: true,
+      })
+    );
   }
 
   // Make from [][] to [] array
