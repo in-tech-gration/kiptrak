@@ -17,6 +17,8 @@ const resolvedFolder = (week: string, day?: string, isDraft = false) =>
     `progress.${isDraft ? "draft." : ""}w${week}.d${day}.csv`
   );
 
+export const weekDays = ["01", "02", "03", "04", "05"];
+
 /**
  * @param isDraft: boolean | default false
  * @param week?: string | e.g. '01'
@@ -31,7 +33,7 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
   if (week && day) {
     day.split(",").forEach((value) => days.push(value));
   } else if (week) {
-    ["01", "02", "03", "04", "05"].forEach((value) => days.push(value));
+    weekDays.forEach((value) => days.push(value));
   } else {
     throw new CSVServiceError(
       "GET_CSV_ERROR",

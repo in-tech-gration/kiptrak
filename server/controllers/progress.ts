@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { getCSV, writeCSV, deleteCSV } from "../services/csv-service";
+import { getCSV, writeCSV, deleteCSV, weekDays } from "../services/csv-service";
 
 // GET /api/progress?type=<type>&week=<week>&day=<day>
 export const getProgress: RequestHandler = async (req, res, next) => {
@@ -20,7 +20,7 @@ export const getProgress: RequestHandler = async (req, res, next) => {
         );
     res.status(200).send({
       week,
-      days: day ? day.toString().split(",") : ["01", "02", "03", "04", "05"],
+      days: day ? day.toString().split(",") : weekDays,
       rows: data.length,
       data,
     });
