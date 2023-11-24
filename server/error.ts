@@ -1,4 +1,4 @@
-export class CustomError extends Error {
+export class CSVServiceError extends Error {
   code: string;
   status: number;
 
@@ -6,7 +6,7 @@ export class CustomError extends Error {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, CustomError);
+      Error.captureStackTrace(this, CSVServiceError);
     }
 
     this.code = code;
