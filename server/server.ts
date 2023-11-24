@@ -14,10 +14,6 @@ app.use(express.static("../client/build"));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} on ${PORT}`);
-});
-
 app.get("/api/hello", (req: Request, res: Response) => {
   res.send({ message: "Hello" });
 });
@@ -27,4 +23,8 @@ app.use("/api/progress", progressRouter);
 // All other unmatched requests will return the React app
 app.get("/", (req: Request, res: Response) => {
   res.send("Server running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running in ${process.env.NODE_ENV} on ${PORT}`);
 });
