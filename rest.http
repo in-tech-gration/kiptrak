@@ -1,3 +1,5 @@
+# Required Extension: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
 ### Test Endpoint 
 http://localhost:5000/api/hello
 
