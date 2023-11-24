@@ -1,0 +1,5 @@
+### Test Endpoint 
+http://localhost:5000/api/hello
+
+### Test Progress Read
+http://localhost:5000/api/progress?&week=01&day=01
