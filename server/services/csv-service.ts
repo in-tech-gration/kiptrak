@@ -6,7 +6,7 @@ import { IProgressRow } from "../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
-const resolvedFolder = (type: string, week: string, day?: string) =>
+const resolvedFolder = (week: string, day?: string, isDraft = false) =>
   path.resolve(
     __dirname,
     "..",
@@ -14,24 +14,26 @@ const resolvedFolder = (type: string, week: string, day?: string) =>
     DATA_FOLDER,
     `week${week}`,
     "progress",
-    `progress.${type}w${week}.d${day}.csv`
+    `progress.${isDraft ? "draft." : ""}w${week}.d${day}.csv`
   );
 
+export const weekDays = ["01", "02", "03", "04", "05"];
+
 /**
- * @param type: string | e.g. 'draft.' or ''
- * @param week: string | e.g. '01'
+ * @param isDraft: boolean | default false
+ * @param week?: string | e.g. '01'
  * @param day?: string | e.g. '01' or '01,02,03'
  *
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
-export const getCSV = async (type: string, week?: string, day?: string) => {
+export const getCSV = async (isDraft = false, week?: string, day?: string) => {
   const records: IProgressRow[][] = [];
 
   const days: string[] = [];
   if (week && day) {
     day.split(",").forEach((value) => days.push(value));
   } else if (week) {
-    ["01", "02", "03", "04", "05"].forEach((value) => days.push(value));
+    weekDays.forEach((value) => days.push(value));
   } else {
     throw new CSVServiceError(
       "GET_CSV_ERROR",
@@ -42,7 +44,7 @@ export const getCSV = async (type: string, week?: string, day?: string) => {
 
   for (const day of days) {
     try {
-      const readData = await fs.readFile(resolvedFolder(type, week, day));
+      const readData = await fs.readFile(resolvedFolder(week, day, isDraft));
 
       const parsedData = parse(readData, { columns: true });
 
@@ -81,7 +83,7 @@ export const writeCSV = async (
     // Parse csv to check for validity
     parse(csv);
 
-    await fs.writeFile(resolvedFolder("", week, day), csv);
+    await fs.writeFile(resolvedFolder(week, day), csv);
   } catch (error: any) {
     throw new CSVServiceError("WRITE_CSV_ERROR", 500, error.message);
   }
@@ -97,7 +99,7 @@ export const deleteCSV = async (week?: string, day?: string) => {
   }
 
   try {
-    await fs.rm(resolvedFolder("", week, day));
+    await fs.rm(resolvedFolder(week, day));
   } catch (error: any) {
     throw new CSVServiceError("DELETE_CSV", 500, error.message);
   }
