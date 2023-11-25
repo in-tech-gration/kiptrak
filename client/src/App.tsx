@@ -1,5 +1,6 @@
 import "./App.css";
 import { useGetProgressByWeekQuery } from './services/progress'
+import Spreadsheet from "./components/spreasheet";
 
 function App() {
 
@@ -18,9 +19,9 @@ function App() {
       ) : data ? (
         <>
           <p>Week: { data.week }</p>
-          {/* @ts-expect-error: come on! */}
-          <p>Days: { data.days.map( (day) => day ) }</p>
-        { console.log(data.data) }
+          <p>Days: { data.days.map( (day:string) => day ) }</p>
+          <Spreadsheet />
+        { console.log({data}) }
         </>
       ) : null}
     </>
