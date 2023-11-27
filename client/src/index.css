@@ -3,9 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* color-scheme: light dark; */
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* TODO: color-scheme: light dark; */
+  /* TODO: color: rgba(255, 255, 255, 0.87); background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -51,7 +50,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+/* TODO: @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -62,4 +61,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
