@@ -2,7 +2,7 @@ import path from "path";
 import { parse } from "csv/sync";
 import { promises as fs } from "fs";
 import { CSVServiceError } from "../error";
-import { IProgressRow } from "../models/progress";
+import { IProgressRow } from "../../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
