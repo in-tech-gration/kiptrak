@@ -6,6 +6,13 @@ import { IProgressRow } from "../../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
 
+/**
+ * Finds the absolute path of the requested progress file
+ * @param week | Number of week in string format, e.g. '01'
+ * @param day | Number of day in string format, e.g. '01
+ * @param isDraft | If the file is a draft
+ * @returns The absolute path of the file
+ */
 const resolvedFolder = (week: string, day?: string, isDraft = false) =>
   path.resolve(
     __dirname,
@@ -20,6 +27,7 @@ const resolvedFolder = (week: string, day?: string, isDraft = false) =>
 export const weekDays = ["01", "02", "03", "04", "05"];
 
 /**
+ * Gets content from a week,day(s) CSV file(s) 
  * @param isDraft: boolean | default false
  * @param week?: string | e.g. '01'
  * @param day?: string | e.g. '01' or '01,02,03'
@@ -61,6 +69,12 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
   );
 };
 
+/**
+ * Saves progress content of a week-day to a CSV file
+ * @param data: IProgressRow[] | Array of IProgressRow for a specific week-day
+ * @param week?: string | Number of week in string format, e.g. '01'
+ * @param day?: string | Number of day in string format, e.g. '01
+ */
 export const writeCSV = async (
   data: IProgressRow[],
   week?: string,
@@ -89,6 +103,11 @@ export const writeCSV = async (
   }
 };
 
+/**
+ * Deletes a CSV of a specific week-day
+ * @param week?: string | Number of week in string format, e.g. '01'
+ * @param day?: string | Number of day in string format, e.g. '01'
+ */
 export const deleteCSV = async (week?: string, day?: string) => {
   if (!week || !day) {
     throw new CSVServiceError(

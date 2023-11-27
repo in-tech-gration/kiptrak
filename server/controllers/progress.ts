@@ -1,7 +1,12 @@
 import { RequestHandler } from "express";
 import { getCSV, writeCSV, deleteCSV, weekDays } from "../services/csv-service";
 
-// GET /api/progress?type=<type>&week=<week>&day=<day>
+/**
+ * { GET /api/progress?type=<type>&week=<week>&day=<day> } : gets progress of week and day(s)
+ * @param req Request object as defined in RequestHandler interface
+ * @param res Response object as defined in RequestHandler interface
+ * @param next NextFunction
+ */
 export const getProgress: RequestHandler = async (req, res, next) => {
   const week = req.query.week;
   const day = req.query.day;
@@ -29,7 +34,12 @@ export const getProgress: RequestHandler = async (req, res, next) => {
   }
 };
 
-// POST /api/progress
+/**
+ * { POST /api/progress } : creates a progress.w{week}.d{day}.csv file
+ * @param req Request object as defined in RequestHandler interface
+ * @param res Response object as defined in RequestHandler interface
+ * @param next NextFunction
+ */
 export const postProgress: RequestHandler = async (req, res, next) => {
   const data = req.body.data;
   const week = req.body.week;
@@ -46,7 +56,12 @@ export const postProgress: RequestHandler = async (req, res, next) => {
   }
 };
 
-// DELETE /api/progress?week=<week>&day=<day>
+/**
+ * { DELETE /api/progress?week=<week>&day=<day> } : deletes a progress.w{week}.d{day}.csv file
+ * @param req Request object as defined in RequestHandler interface
+ * @param res Response object as defined in RequestHandler interface
+ * @param next NextFunction
+ */
 export const deleteProgress: RequestHandler = async (req, res, next) => {
   const week = req.query.week;
   const day = req.query.day;
@@ -62,7 +77,12 @@ export const deleteProgress: RequestHandler = async (req, res, next) => {
   }
 };
 
-// PUT /api/progress
+/**
+ * { PUT /api/progress } : updates a progress.w{week}.d{day}.csv file
+ * @param req Request object as defined in RequestHandler interface
+ * @param res Response object as defined in RequestHandler interface
+ * @param next NextFunction
+ */
 export const updateProgress: RequestHandler = async (req, res, next) => {
   const data = req.body.data;
   const week = req.body.week;
