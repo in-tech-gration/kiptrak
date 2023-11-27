@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { getCSV, writeCSV, deleteCSV, weekDays } from "../services/csv-service";
+import { getCSV, writeCSV, deleteCSV, weekDays, getFolderNames } from "../services/csv-service";
 
 /**
  * { GET /api/progress?type=<type>&week=<week>&day=<day> } : gets progress of week and day(s)
@@ -98,3 +98,20 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * { GET /api/progress/weeks } : gets available weeks of a curriculum
+ * @param req Request object as defined in RequestHandler interface
+ * @param res Response object as defined in RequestHandler interface
+ * @param next NextFunction
+ */
+export const getAvailableWeeks: RequestHandler = async (req, res, next) => {
+  try {
+    const weeks = await getFolderNames();
+    res.status(200).send({
+      weeks
+    });
+  } catch (error) {
+    next(error);
+  }  
+}

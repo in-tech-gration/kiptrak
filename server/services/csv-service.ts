@@ -27,7 +27,7 @@ const resolvedFolder = (week: string, day?: string, isDraft = false) =>
 export const weekDays = ["01", "02", "03", "04", "05"];
 
 /**
- * Gets content from a week,day(s) CSV file(s) 
+ * Gets content from a week,day(s) CSV file(s)
  * @param isDraft: boolean | default false
  * @param week?: string | e.g. '01'
  * @param day?: string | e.g. '01' or '01,02,03'
@@ -121,5 +121,28 @@ export const deleteCSV = async (week?: string, day?: string) => {
     await fs.rm(resolvedFolder(week, day));
   } catch (error: any) {
     throw new CSVServiceError("DELETE_CSV", 500, error.message);
+  }
+};
+
+/**
+ * Returns the names of folders inside the DATA_FOLDER
+ * @returns array of folder names
+ */
+export const getFolderNames = async () => {
+  const folderPath = path.resolve(__dirname, "..", "..", DATA_FOLDER);
+
+  try {
+    // Read the contents of the specified folder
+    const folderContents = await fs.readdir(folderPath);
+
+    // Filter out only the directories (folders)
+    const folderNames = folderContents.filter(async (item) => {
+      const itemPath = path.join(folderPath, item);
+      return (await fs.stat(itemPath)).isDirectory();
+    });
+
+    return folderNames;
+  } catch (error: any) {
+    throw new CSVServiceError("READ_FOLDER", 500, error.message);
   }
 };
