@@ -1,7 +1,8 @@
 import path from "path";
 import { parse } from "csv/sync";
 import { promises as fs } from "fs";
-import { CSVServiceError } from "../error";
+import CSVServiceError from "../errors/CSVServiceError";
+import BadRequestError from "../errors/BadRequestError";
 import { Progress, ProgressSchema } from "../../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
@@ -46,11 +47,11 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
   } else if (week) {
     weekDays.forEach((value) => days.push(value));
   } else {
-    throw new CSVServiceError(
-      "GET_CSV_ERROR",
-      400,
-      "Week parameter is required!"
-    );
+    throw new BadRequestError({
+      code: 400,
+      message: "Week parameter is required!",
+      logging: true,
+    });
   }
 
   for (const day of days) {
@@ -58,7 +59,8 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
       const readData = await fs.readFile(resolvedFolder(week, day, isDraft));
 
       const parsedData = parse(readData, {
-        columns: (header) => header.map((column: string) => column.toLowerCase()),
+        columns: (header) =>
+          header.map((column: string) => column.toLowerCase()),
         cast: (value, { header, column }) => {
           if (header) {
             return value;
@@ -83,7 +85,11 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
 
       records.push(parsedData);
     } catch (error: any) {
-      throw new CSVServiceError("GET_CSV_ERROR", 500, error.message);
+      throw new CSVServiceError({
+        code: 500,
+        message: "Error while reading CSV!",
+        logging: true,
+      });
     }
   }
 
@@ -103,11 +109,11 @@ export const writeCSV = async (
   day?: string
 ) => {
   if (!week || !day) {
-    throw new CSVServiceError(
-      "WRITE_CSV_ERROR",
-      400,
-      "Please provide both 'week' and 'day' parameters."
-    );
+    throw new BadRequestError({
+      code: 400,
+      message: "Week and day parameters are required!",
+      logging: true,
+    });
   }
 
   let csv = CSV_HEADER;
@@ -121,7 +127,11 @@ export const writeCSV = async (
 
     await fs.writeFile(resolvedFolder(week, day), csv);
   } catch (error: any) {
-    throw new CSVServiceError("WRITE_CSV_ERROR", 500, error.message);
+    throw new CSVServiceError({
+      code: 500,
+      message: "Error while writing CSV!",
+      logging: true,
+    });
   }
 };
 
@@ -132,17 +142,21 @@ export const writeCSV = async (
  */
 export const deleteCSV = async (week?: string, day?: string) => {
   if (!week || !day) {
-    throw new CSVServiceError(
-      "DELETE_CSV_ERROR",
-      400,
-      "Please provide both 'week' and 'day' parameters."
-    );
+    throw new BadRequestError({
+      code: 400,
+      message: "Week and day parameters are required!",
+      logging: true,
+    });
   }
 
   try {
     await fs.rm(resolvedFolder(week, day));
   } catch (error: any) {
-    throw new CSVServiceError("DELETE_CSV", 500, error.message);
+    throw new CSVServiceError({
+      code: 500,
+      message: "Error while deleting CSV!",
+      logging: true,
+    });
   }
 };
 
@@ -165,6 +179,10 @@ export const getFolderNames = async () => {
 
     return folderNames;
   } catch (error: any) {
-    throw new CSVServiceError("READ_FOLDER", 500, error.message);
+    throw new CSVServiceError({
+      code: 500,
+      message: "Error while reading contents of folder!",
+      logging: true,
+    });
   }
 };
