@@ -1,7 +1,125 @@
 # Required Extension: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
 ### Test Endpoint 
-http://localhost:5000/api/hello
+GET http://localhost:5000/api/hello
 
-### Test Progress Read
-http://localhost:5000/api/progress?&week=01&day=01
+### Test GET Progress Week 01 Day 01
+GET http://localhost:5000/api/progress
+?week=01
+&day=01
+
+### Test GET Progress Week 01 Days 01, 02 and 03
+GET http://localhost:5000/api/progress
+?week=01
+&day=01,02,03
+
+### Test GET Progress Week 01
+GET http://localhost:5000/api/progress
+?week=01
+
+### Test GET Progress Draft Week 01 Day 01
+GET http://localhost:5000/api/progress
+?week=01
+&day=01
+&isDraft=true
+
+### Test GET Progress Draft Week 01 Days 01, 02 and 03
+GET http://localhost:5000/api/progress
+?week=01
+&day=01,02,03
+&isDraft=true
+
+### Test GET Progress Draft Week 01
+GET http://localhost:5000/api/progress
+?week=01
+&isDraft=true
+
+### Test POST Progress Week 01 Day 01
+POST http://localhost:5000/api/progress
+content-type: application/json
+
+{
+  "week": "01",
+  "day": "01",
+  "data": [
+    {
+      "week": 1,
+      "day": 1,
+      "concept": "Setting up: Markdown",
+      "task": "Watch the 'What is markdown?' video",
+      "level": "Beginner",
+      "confidence": 7,
+      "completed": true,
+      "instructions": "Update CONFIDENCE column. Change COMPLETED column to TRUE "
+    },
+    {
+      "week": 1,
+      "day": 2,
+      "concept": "Setting up: CSV",
+      "task": "Complete the 'Understanding CSV Files' challenge",
+      "level": "Beginner",
+      "confidence": 8,
+      "completed": true,
+      "instructions": "Update CONFIDENCE column. Change COMPLETED column to TRUE "
+    }
+  ]
+}
+
+### Test DELETE Progress Week 01 Day 01
+DELETE http://localhost:5000/api/progress
+?day=01
+&week=01
+
+### Test PUT Progress Week 01 Day 01
+PUT http://localhost:5000/api/progress
+content-type: application/json
+
+{
+  "week": "01",
+  "day": "01",
+  "data": [
+    {
+      "week": 1,
+      "day": 1,
+      "concept": "Setting up: Markdown",
+      "task": "Watch the 'What is markdown?' video",
+      "level": "Beginner",
+      "confidence": 7,
+      "completed": true,
+      "instructions": "Update CONFIDENCE column. Change COMPLETED column to TRUE "
+    },
+    {
+      "week": 1,
+      "day": 1,
+      "concept": "Setting up: CSV",
+      "task": "Complete the 'Understanding CSV Files' challenge",
+      "level": "Beginner",
+      "confidence": 8,
+      "completed": true,
+      "instructions": "Update CONFIDENCE column. Change COMPLETED column to TRUE "
+    },
+    {
+      "week": 1,
+      "day": 1,
+      "concept": "Setting up: Slack",
+      "task": "Connect on Slack: https://intechgration.slack.com",
+      "level": "Beginner",
+      "confidence": 9,
+      "completed": true,
+      "instructions": "Say hello to us on Slack!"
+    },
+    {
+      "week": 1,
+      "day": 1,
+      "concept": "Setting up: GitHub",
+      "task": "Watched the 'WDX-180 - Setting up: SSH Keys Cloning repo & update progress' video",
+      "level": "Beginner",
+      "confidence": 5,
+      "completed": true,
+      "instructions": "Update CONFIDENCE column. Change COMPLETED column to TRUE "
+    }
+  ]
+}
+
+### Test GET Available Weeks
+GET http://localhost:5000/api/progress/weeks
