@@ -89,6 +89,9 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
         code: 500,
         message: "Error while reading CSV!",
         logging: true,
+        context: {
+          stack: error.stack,
+        },
       });
     }
   }
@@ -131,6 +134,9 @@ export const writeCSV = async (
       code: 500,
       message: "Error while writing CSV!",
       logging: true,
+      context: {
+        stack: error.stack,
+      },
     });
   }
 };
@@ -156,6 +162,9 @@ export const deleteCSV = async (week?: string, day?: string) => {
       code: 500,
       message: "Error while deleting CSV!",
       logging: true,
+      context: {
+        stack: error.stack,
+      },
     });
   }
 };
@@ -183,6 +192,9 @@ export const getFolderNames = async () => {
       code: 500,
       message: "Error while reading contents of folder!",
       logging: true,
+      context: {
+        stack: error.stack,
+      },
     });
   }
 };
