@@ -1,7 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import progressRouter from "./routes/progress";
-import { ErrorHandler } from "./middleware/error-handler";
+import ErrorHandler from "./middleware/ErrorHandler";
 import express, { Express, Request, Response } from "express";
 
 dotenv.config({ path: "./config.env" });

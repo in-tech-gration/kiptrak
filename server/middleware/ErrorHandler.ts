@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../../server/errors/CustomError";
+import { CustomError } from "../errors/CustomError";
 
-export const ErrorHandler = (
+const ErrorHandler = (
   err: Error,
   req: Request,
   res: Response,
@@ -32,3 +32,5 @@ export const ErrorHandler = (
     .status(500)
     .send({ errors: [{ message: "Something went wrong" }] });
 };
+
+export default ErrorHandler;
