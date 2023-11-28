@@ -15,21 +15,13 @@ import { ProgressSchema } from "../../models/progress";
  * @param next NextFunction
  */
 export const getProgress: RequestHandler = async (req, res, next) => {
-  const week = req.query.week;
-  const day = req.query.day;
-  const isDraft = req.query.isDraft;
+  const week = req.query.week && req.query.week.toString();
+  const day = req.query.day && req.query.day.toString();
+  const isDraft =
+    req.query.isDraft && req.query.isDraft === "true" ? true : false;
 
   try {
-    const data = day
-      ? await getCSV(
-          isDraft && isDraft === "true" ? true : false,
-          week && week.toString(),
-          day.toString()
-        )
-      : await getCSV(
-          isDraft && isDraft === "true" ? true : false,
-          week && week.toString()
-        );
+    const data = await getCSV(isDraft, week, day);
     res.status(200).send({
       week,
       days: day ? day.toString().split(",") : weekDays,
@@ -72,11 +64,11 @@ export const postProgress: RequestHandler = async (req, res, next) => {
  * @param next NextFunction
  */
 export const deleteProgress: RequestHandler = async (req, res, next) => {
-  const week = req.query.week;
-  const day = req.query.day;
+  const week = req.query.week && req.query.week.toString();
+  const day = req.query.day && req.query.day.toString();
 
   try {
-    await deleteCSV(week && week.toString(), day && day.toString());
+    await deleteCSV(week, day);
     res.status(200).send({
       fileName: `progress.w${week}.d${day}.csv`,
       message: "Success",
@@ -99,7 +91,7 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
 
   try {
     data.forEach((d: any) => ProgressSchema.parse(d));
-    
+
     await writeCSV(data, week, day);
     res.status(200).send({
       fileName: `progress.w${week}.d${day}.csv`,
