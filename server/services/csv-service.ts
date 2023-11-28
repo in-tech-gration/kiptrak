@@ -2,9 +2,12 @@ import path from "path";
 import { parse } from "csv/sync";
 import { promises as fs } from "fs";
 import { CSVServiceError } from "../error";
-import { IProgressRow } from "../../models/progress";
+import { Progress, ProgressSchema } from "../../models/progress";
 
 const DATA_FOLDER = process.env.DATA_FOLDER || "data";
+
+const CSV_HEADER =
+  "Week,Day,Concept,Task,Level,Confidence,Completed,Instructions\n";
 
 /**
  * Finds the absolute path of the requested progress file
@@ -35,7 +38,7 @@ export const weekDays = ["01", "02", "03", "04", "05"];
  * @returns array of JSON objects { columnName: value } from CSV file(s) with first row as header.
  */
 export const getCSV = async (isDraft = false, week?: string, day?: string) => {
-  const records: IProgressRow[][] = [];
+  const records: Progress[][] = [];
 
   const days: string[] = [];
   if (week && day) {
@@ -54,7 +57,29 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
     try {
       const readData = await fs.readFile(resolvedFolder(week, day, isDraft));
 
-      const parsedData = parse(readData, { columns: true });
+      const parsedData = parse(readData, {
+        columns: (header) => header.map((column: string) => column.toLowerCase()),
+        cast: (value, { header, column }) => {
+          if (header) {
+            return value;
+          }
+          if (column === "completed") {
+            if (value === "FALSE") {
+              return false;
+            }
+            return true;
+          }
+          if (
+            column === "week" ||
+            column === "day" ||
+            column === "confidence"
+          ) {
+            return parseInt(value);
+          }
+          return value;
+        },
+      });
+      parsedData.forEach((p: any) => ProgressSchema.parse(p));
 
       records.push(parsedData);
     } catch (error: any) {
@@ -63,20 +88,17 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
   }
 
   // Make from [][] to [] array
-  return records.reduce(
-    (acc, value) => acc.concat(value),
-    [] as IProgressRow[]
-  );
+  return records.reduce((acc, value) => acc.concat(value), [] as Progress[]);
 };
 
 /**
  * Saves progress content of a week-day to a CSV file
- * @param data: IProgressRow[] | Array of IProgressRow for a specific week-day
+ * @param data: Progress[] | Array of Progress for a specific week-day
  * @param week?: string | Number of week in string format, e.g. '01'
  * @param day?: string | Number of day in string format, e.g. '01
  */
 export const writeCSV = async (
-  data: IProgressRow[],
+  data: Progress[],
   week?: string,
   day?: string
 ) => {
@@ -88,7 +110,7 @@ export const writeCSV = async (
     );
   }
 
-  let csv = Object.keys(data[0]).join(",") + "\n";
+  let csv = CSV_HEADER;
   for (const row of data) {
     csv += Object.values(row).join(",") + "\n";
   }

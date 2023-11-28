@@ -1,5 +1,12 @@
 import { RequestHandler } from "express";
-import { getCSV, writeCSV, deleteCSV, weekDays, getFolderNames } from "../services/csv-service";
+import {
+  getCSV,
+  writeCSV,
+  deleteCSV,
+  weekDays,
+  getFolderNames,
+} from "../services/csv-service";
+import { ProgressSchema } from "../../models/progress";
 
 /**
  * { GET /api/progress?type=<type>&week=<week>&day=<day> } : gets progress of week and day(s)
@@ -46,6 +53,8 @@ export const postProgress: RequestHandler = async (req, res, next) => {
   const day = req.body.day;
 
   try {
+    data.forEach((d: any) => ProgressSchema.parse(d));
+
     await writeCSV(data, week, day);
     res.status(201).send({
       fileName: `progress.w${week}.d${day}.csv`,
@@ -89,6 +98,8 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
   const day = req.body.day;
 
   try {
+    data.forEach((d: any) => ProgressSchema.parse(d));
+    
     await writeCSV(data, week, day);
     res.status(200).send({
       fileName: `progress.w${week}.d${day}.csv`,
@@ -109,9 +120,9 @@ export const getAvailableWeeks: RequestHandler = async (req, res, next) => {
   try {
     const weeks = await getFolderNames();
     res.status(200).send({
-      weeks
+      weeks,
     });
   } catch (error) {
     next(error);
-  }  
-}
+  }
+};

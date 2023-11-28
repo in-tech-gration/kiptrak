@@ -1,4 +1,4 @@
-import { IProgressRow } from "./progress";
+import { Progress } from "./progress";
 
 export interface Meta {
   timeStamp: Date;
@@ -6,5 +6,5 @@ export interface Meta {
 
 export interface ProgressRequest {
   meta: Meta;
-  progressRows: IProgressRow[];
+  progressRows: Progress[];
 }
