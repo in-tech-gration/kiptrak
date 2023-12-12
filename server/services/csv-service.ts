@@ -4,8 +4,7 @@ import { promises as fs } from "fs";
 import CSVServiceError from "../errors/CSVServiceError";
 import BadRequestError from "../errors/BadRequestError";
 import { Progress, ProgressSchema } from "../../models/progress";
-
-const DATA_FOLDER = process.env.DATA_FOLDER || "data";
+import { DATA_FOLDER } from "../server";
 
 const CSV_HEADER =
   "Week,Day,Concept,Task,Level,Confidence,Completed,Instructions\n";
@@ -19,9 +18,7 @@ const CSV_HEADER =
  */
 const resolvedFolder = (week: string, day?: string, isDraft = false) =>
   path.resolve(
-    __dirname,
-    "..",
-    "..",
+    process.cwd(),
     DATA_FOLDER,
     `week${week}`,
     "progress",
@@ -174,7 +171,7 @@ export const deleteCSV = async (week?: string, day?: string) => {
  * @returns array of folder names
  */
 export const getFolderNames = async () => {
-  const folderPath = path.resolve(__dirname, "..", "..", DATA_FOLDER);
+  const folderPath = path.resolve(process.cwd(), DATA_FOLDER);
 
   try {
     // Read the contents of the specified folder
