@@ -54,7 +54,7 @@ content-type: application/json
     },
     {
       "week": 1,
-      "day": 2,
+      "day": 1,
       "concept": "Setting up: CSV",
       "task": "Complete the 'Understanding CSV Files' challenge",
       "level": "Beginner",
