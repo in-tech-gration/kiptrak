@@ -9,6 +9,8 @@ import { DATA_FOLDER } from "../server";
 const CSV_HEADER =
   "Week,Day,Concept,Task,Level,Confidence,Completed,Instructions\n";
 
+export const weekDays = ["01", "02", "03", "04", "05"];
+
 /**
  * Finds the absolute path of the requested progress file
  * @param week | Number of week in string format, e.g. '01'
@@ -25,7 +27,34 @@ const resolvedFolder = (week: string, day?: string, isDraft = false) =>
     `progress.${isDraft ? "draft." : ""}w${week}.d${day}.csv`
   );
 
-export const weekDays = ["01", "02", "03", "04", "05"];
+/**
+ * 
+ * @param data | Buffer data imported from a CSV file
+ * @returns | JSON object parsed using the ProgressSchema created with zod
+ */
+const parseToProgressData = (data: Buffer) => {
+  const parsedData = parse(data, {
+    columns: (header) => header.map((column: string) => column.toLowerCase()),
+    cast: (value, { header, column }) => {
+      if (header) {
+        return value;
+      }
+      if (column === "completed") {
+        if (value === "FALSE") {
+          return false;
+        }
+        return true;
+      }
+      if (column === "week" || column === "day" || column === "confidence") {
+        return parseInt(value);
+      }
+      return value;
+    },
+  });
+  parsedData.forEach((p: any) => ProgressSchema.parse(p));
+
+  return parsedData;
+};
 
 /**
  * Gets content from a week,day(s) CSV file(s)
@@ -55,30 +84,7 @@ export const getCSV = async (isDraft = false, week?: string, day?: string) => {
     try {
       const readData = await fs.readFile(resolvedFolder(week, day, isDraft));
 
-      const parsedData = parse(readData, {
-        columns: (header) =>
-          header.map((column: string) => column.toLowerCase()),
-        cast: (value, { header, column }) => {
-          if (header) {
-            return value;
-          }
-          if (column === "completed") {
-            if (value === "FALSE") {
-              return false;
-            }
-            return true;
-          }
-          if (
-            column === "week" ||
-            column === "day" ||
-            column === "confidence"
-          ) {
-            return parseInt(value);
-          }
-          return value;
-        },
-      });
-      parsedData.forEach((p: any) => ProgressSchema.parse(p));
+      const parsedData = parseToProgressData(readData);
 
       records.push(parsedData);
     } catch (error: any) {
