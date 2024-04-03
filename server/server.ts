@@ -8,7 +8,7 @@ import express, { Express, Request, Response } from "express";
 const env = dotenv.config({ path: path.resolve(process.cwd(), "config.env") });
 
 const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || "development";
+export const NODE_ENV = process.env.NODE_ENV || "development";
 export const DATA_FOLDER = process.env.DATA_FOLDER || "user";
 
 const app: Express = express();

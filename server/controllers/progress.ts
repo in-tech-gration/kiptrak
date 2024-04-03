@@ -7,6 +7,7 @@ import {
   getFolderNames,
 } from "../services/csv-service";
 import { ProgressSchema } from "../../models/progress";
+import { NODE_ENV } from "../server";
 
 /**
  * { GET /api/progress?type=<type>&week=<week>&day=<day> } : gets progress of week and day(s)
@@ -21,10 +22,16 @@ export const getProgress: RequestHandler = async (req, res, next) => {
     req.query.isDraft && req.query.isDraft === "true" ? true : false;
 
   try {
+    const days = day ? day.toString().split(",") : weekDays;
+    console.log(`GET Progress of week: ${week} and days: ${days}`);
+
     const data = await getCSV(isDraft, week, day);
+    if (NODE_ENV == "development") {
+      console.log(`Data: ${JSON.stringify(data, null, 2)}`);
+    }
     res.status(200).send({
       week,
-      days: day ? day.toString().split(",") : weekDays,
+      days,
       rows: data.length,
       data,
     });
@@ -46,10 +53,16 @@ export const postProgress: RequestHandler = async (req, res, next) => {
 
   try {
     data.forEach((d: any) => ProgressSchema.parse(d));
+    console.log(`POST Progress for week: ${week} and day: ${day}`);
 
     await writeCSV(data, week, day);
+    const fileName = `progress.w${week}.d${day}.csv`;
+    if (NODE_ENV == "development") {
+      console.log(`Successfully created file: ${fileName}`);
+      console.log(`Data: ${JSON.stringify(data, null, 2)}`);
+    }
     res.status(201).send({
-      fileName: `progress.w${week}.d${day}.csv`,
+      fileName,
       data,
     });
   } catch (error) {
@@ -68,9 +81,15 @@ export const deleteProgress: RequestHandler = async (req, res, next) => {
   const day = req.query.day && req.query.day.toString();
 
   try {
+    console.log(`DELETE Progress for week: ${week} and day: ${day}`);
+
     await deleteCSV(week, day);
+    const fileName = `progress.w${week}.d${day}.csv`;
+    if (NODE_ENV == "development") {
+      console.log(`Successfully deleted file: ${fileName}`);
+    }
     res.status(200).send({
-      fileName: `progress.w${week}.d${day}.csv`,
+      fileName,
       message: "Success",
     });
   } catch (error) {
@@ -91,10 +110,16 @@ export const updateProgress: RequestHandler = async (req, res, next) => {
 
   try {
     data.forEach((d: any) => ProgressSchema.parse(d));
+    console.log(`POST Progress for week: ${week} and day: ${day}`);
 
     await writeCSV(data, week, day);
+    const fileName = `progress.w${week}.d${day}.csv`;
+    if (NODE_ENV == "development") {
+      console.log(`Successfully updated file: ${fileName}`);
+      console.log(`Data: ${JSON.stringify(data, null, 2)}`);
+    }
     res.status(200).send({
-      fileName: `progress.w${week}.d${day}.csv`,
+      fileName,
       data,
     });
   } catch (error) {
